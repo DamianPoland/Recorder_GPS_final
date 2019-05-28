@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "283853648104",
+    "firebase_url": "https://fir-eab48.firebaseio.com",
+    "project_id": "fir-eab48",
+    "storage_bucket": "fir-eab48.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283853648104:android:cc5e287fcd5dc9d7",
+        "android_client_info": {
+          "package_name": "com.wolfmobileapps.recordergps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283853648104-mpts97o4o61eka8cqff82b4lfsu3p2mb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wolfmobileapps.recordergps",
+            "certificate_hash": "75f179d8acb756a978069302282204015a31262a"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1AXvVMvS9NcftitN2oPSl7yJz13Z3qAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Rejestrator GPS</string>
+    <string name="application_developer">Kontakt</string>
+    <string name="date">Data</string>
+    <string name="delete_map">Usuń Mapę</string>
+    <string name="disabled_gps">Odbiornik GPS jest wyłaczony</string>
+    <string name="drive_mode">TRYB samochodowy</string>
+    <string name="faq_description">1. Jak otworzyć mapę? \n\nKrótkie kliknięcie na zapisaną trasę. \n\n\n2. Jsk usunąć zapisaną trasę?  \n\nDługie kliknięcie na zapisaną trasę.</string>
+    <string name="infoAppDescription">Kontakt:  \nwww.wolfmobileapps.com</string>
+    <string name="listview_is_empty">\nJeszcze nie miasz żadnych zapisanych tras. \n\nKliknij START aby rozpocząć zapis. \nKliknij STOP aby zakańczyć zapis i automatycznie zapisać trasę. \n\nKrótkie kliknięcie na zapisaną trasę otwiera mapę. \nDługie kliknięcie na zapisaną trasę usuwa zapis. \n\nPowodzenia…</string>
+    <string name="mode_walk_or_drive">Tryb pieszy lub samochodowy</string>
+    <string name="open_map">Otwórz mapę</string>
+    <string name="opening_google_maps">Poczekaj… \nMapy Google\nsą ładowane…</string>
+    <string name="permission_not_accepted">Pozwolenie zaakceptowane</string>
+    <string name="recording">Zapis trasy..</string>
+    <string name="settings">Ustawienia</string>
+    <string name="title_activity_maps">Mapa</string>
+    <string name="version">Versja</string>
+    <string name="view_frequently_asked_questions">Często zadawane pytania</string>
+    <string name="walk_mode">TRYB pieszy</string>
+    <string name="weating_for_gps_sygnal">Oczekiwanie na sygnał GPS…</string>
+    <string name="you_are_here">Jesteś tutaj</string>
+    <string name="distance">"Dystans: "</string>
+    <string name="speed">"Prędkość: "</string>
+    <string name="time">"Czas: "</string>
+</resources>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/shape_for_list_view">
+
+
+    <ImageView
+        android:id="@+id/imageForAdapter"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="0.7"
+        android:scaleType="centerInside"
+        android:src="@drawable/ikonka_mapka"
+        android:layout_gravity="center_vertical"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.1"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:paddingEnd="4dp"
+                android:src="@drawable/calendar_transparent" />
+
+            <TextView
+                android:id="@+id/textViewForAdapter11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/ezample1"
+                android:textSize="16sp"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewForAdapter12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/ezample1"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22sp"
+                android:layout_height="22sp"
+                android:paddingEnd="4dp"
+                android:src="@drawable/time_transparent" />
+
+            <TextView
+                android:id="@+id/textViewForAdapter2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example2"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22sp"
+                android:layout_height="22sp"
+                android:paddingEnd="4dp"
+                android:src="@drawable/distance_transparent" />
+
+            <TextView
+                android:id="@+id/textViewForAdapter3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example3"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22sp"
+                android:layout_height="22sp"
+                android:paddingEnd="4dp"
+                android:src="@drawable/speed_transparent" />
+
+            <TextView
+                android:id="@+id/textViewForAdapter4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/example4"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

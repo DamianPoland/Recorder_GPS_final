@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Recorder GPS</string>
+    <string name="start" translatable="false">Start</string>
+    <string name="stop" translatable="false">Stop</string>
+    <string name="date">Date</string>
+    <string name="ezample1" translatable="false">Ezample1</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="channel_description" translatable="false">Recorder GPS</string>
+    <string name="settings">Settings</string>
+    <string name="open_map">Open Map</string>
+    <string name="delete_map">Delete Map</string>
+    <string name="you_are_here">You are here</string>
+    <string name="example2" translatable="false">Example2</string>
+    <string name="example3" translatable="false">Example3</string>
+    <string name="example4" translatable="false">Example4</string>
+    <string name="weating_for_gps_sygnal">Weating for GPS sygnal…</string>
+    <string name="general" translatable="false">General</string>
+    <string name="mode_walk_or_drive">Mode Walk or Drive</string>
+    <string name="walk_mode">MODE: Walk</string>
+    <string name="drive_mode">MODE: Drive</string>
+    <string name="application_developer">Application developer</string>
+    <string name="source" translatable="false">Source</string>
+    <string name="view_frequently_asked_questions">View frequently asked questions</string>
+    <string name="version">Version</string>
+    <string name="about" translatable="false">About</string>
+    <string name="faq" translatable="false">FAQ</string>
+    <string name="infoApp" translatable="false">Info</string>
+
+    <string name="faq_description">1. How to open map? \n\nShort Click on RECORD. \n\n\n2. How to delete the record? \n\nLong Click on RECORD. </string>
+    <string name="sourceDescription" translatable="false">SphericalUtil \n\nCopyright 2013 Google Inc. \n\nLicensed under the Apache License, Version 2.0 (the "License"); \nyou may not use this file except in compliance with the License.
+You may obtain a copy of the License at \n\n    http://www.apache.org/licenses/LICENSE-2.0 \n\nUnless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, \nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. \nSee the License for the specific language governing permissions and
+limitations under the License.</string>
+    <string name="infoAppDescription">Application developer:   www.wolfmobileapps.com</string>
+    <string name="open_source_licenses" translatable="false">Open Source licenses</string>
+    <string name="recording">Recording…</string>
+    <string name="listview_is_empty">\nYou have no records yet. \n\nPress START to begin recording. \nPress STOP to finish and save Your record. \n\nShort Click on RECORD open Map.\nLong Click on RECORD delete Record. \n\nGood lack…</string>
+    <string name="opening_google_maps">Please wait…  \nGoogle Maps… \nare oppening…</string>
+    <string name="permission_not_accepted">Permission not accepted</string>
+    <string name="disabled_gps">GPS is turn off.</string>
+    <string name="time">Time: </string>
+    <string name="distance">Distance: </string>
+    <string name="speed">Speed: </string>
+
+
+</resources>
