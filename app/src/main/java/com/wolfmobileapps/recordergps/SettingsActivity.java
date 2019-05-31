@@ -22,6 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
     private LinearLayout version;
     private LinearLayout faq;
     private LinearLayout source;
+    private LinearLayout privacy;
     private LinearLayout info;
 
     private TextView textViewVersionName;
@@ -41,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         version = findViewById(R.id.version);
         faq = findViewById(R.id.faq);
         source = findViewById(R.id.source);
+        privacy = findViewById(R.id.privacy);
         info = findViewById(R.id.info);
         textViewMode = findViewById(R.id.textViewMode);
 
@@ -113,6 +115,15 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String titule = getResources().getString(R.string.open_source_licenses);
                 String alertString = getResources().getString(R.string.sourceDescription);
+                createAlertDialog(titule, alertString);
+            }
+        });
+
+        privacy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String titule = getResources().getString(R.string.privacy_policy);
+                String alertString = getResources().getString(R.string.privacy_policy_description);
                 createAlertDialog(titule, alertString);
             }
         });

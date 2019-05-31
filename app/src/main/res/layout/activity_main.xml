@@ -55,7 +55,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="12dp"
         android:text="@string/recording"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/buttonStart"
         app:layout_constraintTop_toTopOf="@+id/buttonStart"
@@ -137,21 +137,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/listViewOfMapPoints"
         app:layout_constraintStart_toStartOf="parent"
         android:background="@android:color/white">
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:scaleType="fitCenter"
-            android:paddingStart="8dp"
-            android:src="@drawable/wolf_icon" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="  www.wolfmobileapps.com  "
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="16sp" />
-
 
     </LinearLayout>
 
