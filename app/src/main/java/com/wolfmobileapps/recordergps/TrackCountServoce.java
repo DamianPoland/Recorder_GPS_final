@@ -1,10 +1,14 @@
 package com.wolfmobileapps.recordergps;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.arch.persistence.room.Room;
+
+import androidx.room.Room;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,9 +18,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+
 import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 import com.wolfmobileapps.recordergps.data.MainMapPoinDatabase;
@@ -38,6 +45,7 @@ public class TrackCountServoce extends Service implements LocationListener {
     public static final String NAME_OF_SHARED_PREFERNECES = "gpsRedorderSharPref";
     public static final String KEY_FOR_SHARED_PREF_TP_DB_NAME = "key to shared pref tp db name";
     public static final String KEY_FOR_SHARED_PREF_ANIMATE_FIRST_ITEM = "key to shared pref to animate first item";
+    public static final int ID_OF_NOTIFICATION = 151;
 
     private Notification notification;
     private MapPoinDatabase db;
@@ -60,17 +68,17 @@ public class TrackCountServoce extends Service implements LocationListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        // ustawienie notification
-        setTheNotificationWithTapAction();
-
-        // wystartowanie service
-        startForeground(101, notification); //nadać unikalne Id
-
         //start locationManager i instancja db
         instantionOfLocationListener(this);
 
         // instancja locationManagera
         instantionOfLocationManager(this);
+
+        // ustawienie notification
+        setTheNotificationWithTapAction();
+
+        // wystartowanie service
+        startForeground(ID_OF_NOTIFICATION, notification); //nadać unikalne Id
 
 
         return START_STICKY;
@@ -89,10 +97,11 @@ public class TrackCountServoce extends Service implements LocationListener {
         //instancja bazy danych Room z daną nazwą
         Log.d(TAG, "instantionOfLocationListener dbName:" + dbName);
         db = Room.databaseBuilder(context, MapPoinDatabase.class, "" + dbName)
+                .allowMainThreadQueries()
                 .build();
     }
 
-    private void instantionOfLocationManager(Context context){
+    private void instantionOfLocationManager(Context context) {
 
         // instancja locationManagera
         locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
@@ -106,7 +115,7 @@ public class TrackCountServoce extends Service implements LocationListener {
         int minDistance = 10; // powinno być 10
         // jeśli jest włączony car mode to zmienia dane
         shar = context.getSharedPreferences(NAME_OF_SHARED_PREFERNECES, MODE_PRIVATE);
-        if (shar.getBoolean(KEY_FOR_SHARED_PREF_SWITCH,false)){
+        if (shar.getBoolean(KEY_FOR_SHARED_PREF_SWITCH, false)) {
             minTime = 60000;  //powinno być 60000
             minDistance = 100; // powinno być 100
         }
@@ -124,11 +133,20 @@ public class TrackCountServoce extends Service implements LocationListener {
         locationManager.removeUpdates(this);
     }
 
+    public String distanceToUpdateNotification(Context context, long dbNameLong) {
+        // przebyty dystans z listy wzięty w metrach
+        List<LatLng> listLatLng = getListFromDbOfMapPoins(context, dbNameLong);
+        double distance = SphericalUtil.computeLength(listLatLng);
+        int distanceRounded = (int) distance; //zaoukrąglenie do całych metrów
+        String distanceInMeters = " " + distanceRounded + " m";
+        return distanceInMeters;
+    }
+
     public void setTheNotificationWithTapAction() {
         // jeśli jest włączony car mode to zmienia dane
         int icon = R.drawable.ic_directions_walk_black_24dp_walk;
         shar = this.getSharedPreferences(NAME_OF_SHARED_PREFERNECES, MODE_PRIVATE);
-        if (shar.getBoolean(KEY_FOR_SHARED_PREF_SWITCH,false)){
+        if (shar.getBoolean(KEY_FOR_SHARED_PREF_SWITCH, false)) {
             icon = R.drawable.ic_directions_car_black_24dp_drive_mode;
         }
 
@@ -139,8 +157,8 @@ public class TrackCountServoce extends Service implements LocationListener {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(icon)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText("Recording...")
+                .setContentTitle(getString(R.string.app_name) + " working...")
+                .setContentText(getString(R.string.distance) + distanceToUpdateNotification(getApplicationContext(), shar.getLong(KEY_FOR_SHARED_PREF_TP_DB_NAME, 1111)))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
@@ -157,7 +175,7 @@ public class TrackCountServoce extends Service implements LocationListener {
 
         //zmiana w shar na to aby dodane view było animowane
         editor = shar.edit(); //wywołany edytor do zmian
-        editor.putBoolean(KEY_FOR_SHARED_PREF_ANIMATE_FIRST_ITEM,true);
+        editor.putBoolean(KEY_FOR_SHARED_PREF_ANIMATE_FIRST_ITEM, true);
         editor.apply();
 
         // wyliczenie czasu drogi w godzinach
@@ -171,17 +189,17 @@ public class TrackCountServoce extends Service implements LocationListener {
         Log.d(TAG, "distance: " + distance);
 
         // wyliczenieśredniej prędkości w km/h
-        double time = timeOfTrack/(1000); // czas w sekundach
-        double speedNotRounded = distance/time*3.6; //speed w km/h
-        double speedMultiplayed = speedNotRounded*100;
+        double time = timeOfTrack / (1000); // czas w sekundach
+        double speedNotRounded = distance / time * 3.6; //speed w km/h
+        double speedMultiplayed = speedNotRounded * 100;
         double speedRounded = Math.round(speedMultiplayed);
-        double speed = speedRounded/100;
+        double speed = speedRounded / 100;
 
         // instancja dbMain
         final MainMapPoinDatabase dbMain = MainMapPoinDatabase.getInstance(context);
 
         //zapisanie danych do dbMain
-        final MainMapPoint mp = new MainMapPoint(dbNameLong,timeOfTrack,distance,speed);
+        final MainMapPoint mp = new MainMapPoint(dbNameLong, timeOfTrack, distance, speed);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -191,7 +209,7 @@ public class TrackCountServoce extends Service implements LocationListener {
 
     }
 
-    public List<LatLng> getListFromDbOfMapPoins(Context context, long nameLong){
+    public List<LatLng> getListFromDbOfMapPoins(Context context, long nameLong) {
 
         // instancja bazy danych
         MapPoinDatabase dbToMap = Room.databaseBuilder(context, MapPoinDatabase.class, "" + nameLong)
@@ -203,10 +221,10 @@ public class TrackCountServoce extends Service implements LocationListener {
 
         //wpisanie listy z db do listy poliline
         List<LatLng> listLatLng = new ArrayList<>();
-        for (MapPoint mapPoint : listOfMapPoints){
+        for (MapPoint mapPoint : listOfMapPoints) {
             double lat = mapPoint.getLatitudePoint();
             double lng = mapPoint.getLongitudePoint();
-            listLatLng.add(new LatLng(lat,lng));
+            listLatLng.add(new LatLng(lat, lng));
             Log.d(TAG, "lat: " + lat + " lng: " + lng);
         }
         return listLatLng;
@@ -219,13 +237,14 @@ public class TrackCountServoce extends Service implements LocationListener {
         //przy każdej zmianie czasu lub/i dystansu z locationManagera wywołuje tą metodę i zapisuje w db z aktualnym name
         double lat = location.getLatitude();
         double lng = location.getLongitude();
-        final MapPoint mp = new MapPoint(lat,lng);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                db.userDao().insertAll(mp);
-            }
-        }).start();
+        final MapPoint mp = new MapPoint(lat, lng);
+        db.userDao().insertAll(mp);
+
+        //pokazuje aktualnie przebyty dystans w notification
+        setTheNotificationWithTapAction();
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(ID_OF_NOTIFICATION, notification);
+
         Log.d(TAG, "onLocationChanged lat: " + location.getLatitude() + " lng: " + location.getLongitude());
     }
 

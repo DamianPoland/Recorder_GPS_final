@@ -1,21 +1,24 @@
 package com.wolfmobileapps.recordergps;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.arch.persistence.room.Room;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.room.Room;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -31,14 +34,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.model.LatLng;
 import com.wolfmobileapps.recordergps.data.MainMapPoinArrayAdapter;
 import com.wolfmobileapps.recordergps.data.MainMapPoinDatabase;
 import com.wolfmobileapps.recordergps.data.MainMapPoint;
 import com.wolfmobileapps.recordergps.data.MapPoinDatabase;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_FOR_SHARED_PREF_TO_VISIBILITY = "key to shared pref to visibility";
     // dos prawdzenia google plat\y service
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    // stałe do reklam
+    public static final String APP_ID = "ca-app-pub-1490567689734833~4589409756"; //zapisana w manifeście w metadata
+    public static final String ADD_INTERSTITIAL_ID = "ca-app-pub-1490567689734833/7064884493"; //w start activity wpisane (testowe to: "ca-app-pub-3940256099942544/1033173712")
+    public static final String ADD_BANNER_ID = "ca-app-pub-1490567689734833/5447075710"; //w XML wpisane (testowe to "ca-app-pub-3940256099942544/6300978111")
 
 
     private Button buttonStart;
@@ -113,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         // animation przycisków start i stip przy włączeniu aplikacji
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_right_to_left);
         buttonStop.startAnimation(animation);
-        animation = AnimationUtils.loadAnimation(this,R.anim.anim_left_to_right);
+        animation = AnimationUtils.loadAnimation(this, R.anim.anim_left_to_right);
         buttonStart.startAnimation(animation);
 
         //instanacja głownej db
@@ -151,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 // sprawdzenie czy GPS jest włączony
-                if (!checkEnabledGPS()){
+                if (!checkEnabledGPS()) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.disabled_gps), Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -194,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 //sprawdzeni czy google play sservice jest dostepny na telefonie
-                if (!checkGooglePlayServices()){
+                if (!checkGooglePlayServices()) {
                     Toast.makeText(MainActivity.this, "Google Play service not found", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -242,9 +255,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // do reklam -banner
+        AdView mAdView;
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
+
 
     @Override
     protected void onStart() {

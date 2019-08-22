@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menuSetingsMain"
-        android:icon="@drawable/ic_settings_black_24dp_setings"
+        android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/settings"
-        app:showAsAction="withText"/>
+        app:showAsAction="ifRoom" />
 </menu>

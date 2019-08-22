@@ -6,7 +6,7 @@
     <string name="delete_map">Usuń Mapę</string>
     <string name="disabled_gps">Odbiornik GPS jest wyłaczony</string>
     <string name="drive_mode">TRYB samochodowy</string>
-    <string name="faq_description">1. Jak otworzyć mapę? \n\nKrótkie kliknięcie na zapisaną trasę. \n\n\n2. Jak usunąć zapisaną trasę?  \n\nDługie kliknięcie na zapisaną trasę.</string>
+    <string name="faq_description">1. Jak otworzyć mapę? \n\nKrótkie kliknięcie na zapisaną trasę. \n\n\n2. Jak usunąć zapisaną trasę?  \n\nDługie kliknięcie na zapisaną trasę. \n\n\n3. Export i Import do pliku na dysku DCIM/RecorderGPS/data.txt. Format JSon.</string>
     <string name="infoAppDescription">Kontakt:  \nwww.wolfmobileapps.com</string>
     <string name="listview_is_empty">\nJeszcze nie miasz żadnych zapisanych tras. \n\nKliknij START aby rozpocząć zapis. \nKliknij STOP aby zakańczyć zapis i automatycznie zapisać trasę. \n\nKrótkie kliknięcie na zapisaną trasę otwiera mapę. \nDługie kliknięcie na zapisaną trasę usuwa zapis. \n\nPowodzenia…</string>
     <string name="mode_walk_or_drive">Tryb pieszy lub samochodowy</string>
@@ -26,4 +26,6 @@
     <string name="time">"Czas: "</string>
     <string name="privacy_policy">Polityka prywatności</string>
     <string name="privacy_policy_info">Informacje o polityce prywatności</string>
+    <string name="export_and_import_data">Exportowanie i Importowanie danych</string>
+    <string name="loading">Ładowanie ...</string>
 </resources>
