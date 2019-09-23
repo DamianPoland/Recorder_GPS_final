@@ -34,8 +34,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.model.LatLng;
@@ -74,8 +77,13 @@ public class MainActivity extends AppCompatActivity {
 
     // stałe do reklam
     public static final String APP_ID = "ca-app-pub-1490567689734833~4589409756"; //zapisana w manifeście w metadata
-    public static final String ADD_INTERSTITIAL_ID = "ca-app-pub-1490567689734833/7064884493"; //w start activity wpisane (testowe to: "ca-app-pub-3940256099942544/1033173712")
+    public static final String ADD_INTERSTITIAL_ID = "ca-app-pub-1490567689734833/7064884493"; //moje to ca-app-pub-1490567689734833/7064884493 (testowe to: "ca-app-pub-3940256099942544/1033173712")
     public static final String ADD_BANNER_ID = "ca-app-pub-1490567689734833/5447075710"; //w XML wpisane (testowe to "ca-app-pub-3940256099942544/6300978111")
+    public static final String KEY_FOR_POSITION_TO_OPEN_MAP = "key for position to open map"; //do shar pref żeby zapisać pozycję kliknięcia w list view aby wyświetliło reklamy a dopiero potem mapę
+
+    // do reklamy całoekranowej
+    private InterstitialAd mInterstitialAd;
+    private boolean shouldLoadAds; // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds
 
 
     private Button buttonStart;
@@ -205,30 +213,17 @@ public class MainActivity extends AppCompatActivity {
         listViewOfMapPoints.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editor = shar.edit(); //wywołany edytor do zmian
+                editor.putInt(KEY_FOR_POSITION_TO_OPEN_MAP, position); // nadanie wartości
+                editor.apply(); // musi być na końcu aby zapisać zmiany w shar
 
-                //sprawdzeni czy google play sservice jest dostepny na telefonie
-                if (!checkGooglePlayServices()) {
-                    Toast.makeText(MainActivity.this, "Google Play service not found", Toast.LENGTH_SHORT).show();
-                    return;
+
+                if (shouldLoadAds && mInterstitialAd.isLoaded()) { // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds patrz niżej
+                    mInterstitialAd.show(); //pokazuje reklamę
+                } else {
+                    //otwarcie mapy
+                    openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
                 }
-
-                // jeśli widać recording to trzeba pousuwać żeby pokazć text view z info please wait opening google maps
-                textViewRecording.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
-                gifImageView.setVisibility(View.GONE);
-
-                // pokazanie text view z info please wait opening google maps
-                textViewOpeningGoogleMaps.setVisibility(View.VISIBLE);
-
-                //pobranie nazwy danego child z db
-                MainMapPoint mp = adapter.getItem(position);
-                long nameLong = mp.getDbOfMapName(); // zmiana nazwy na longa
-
-                // otwarcie mapy i dodanie do intent nazwy db danego child
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-                intent.putExtra(NAME_OF_EXTRA_DATA_TO_INTENT_MAP, nameLong);
-                startActivity(intent);
-                Log.d(TAG, "onItemClick: ??");
             }
         });
 
@@ -260,8 +255,86 @@ public class MainActivity extends AppCompatActivity {
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+
+        // do reklamy całoekranowej
+        MobileAds.initialize(this); //inicjalizacja reklam potrzebna tylko raz na całą aplikację
+        mInterstitialAd = new InterstitialAd(this); // instancja danej reklamy
+        mInterstitialAd.setAdUnitId(ADD_INTERSTITIAL_ID); //wpisać ID danej reklamy czyli identyfikator jednostki reklamowej wzięty z AdMOB
+        mInterstitialAd.loadAd(new AdRequest.Builder().build()); // ładuje reklamę to chwile potrwa więc od razu może nie pokazać bo nie będzie załadowana dlatego trzeba dodać listenera jak niżej
+        mInterstitialAd.setAdListener(new AdListener() {// dodaje listenera do pokazywania reklam jak np się załaduje reklama i mozna ustawić też inne rzeczy że się wyświetla ale są bez sensu
+            @Override
+            public void onAdLoaded() {
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) { //jeśli error jest 3 to nie ma zasobów reklamowych
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+            }
+
+            @Override
+            public void onAdLeftApplication() { //jeśli error to 3 to nie ma zasobów reklamowych
+                shouldLoadAds = false; // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds
+            }
+
+            @Override
+            public void onAdClosed() {
+                //otwarcie mapy
+                openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
+            }
+        });
+
     }
 
+    //metoda otweira mape z daną drogą
+    private void openMap(int position){
+        //sprawdzeni czy google play sservice jest dostepny na telefonie
+        if (!checkGooglePlayServices()) {
+            Toast.makeText(MainActivity.this, "Google Play service not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // jeśli widać recording to trzeba pousuwać żeby pokazć text view z info please wait opening google maps
+        textViewRecording.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        gifImageView.setVisibility(View.GONE);
+
+        // pokazanie text view z info please wait opening google maps
+        textViewOpeningGoogleMaps.setVisibility(View.VISIBLE);
+
+        //pobranie nazwy danego child z db
+        MainMapPoint mp = adapter.getItem(position);
+        long nameLong = mp.getDbOfMapName(); // zmiana nazwy na longa
+
+        // otwarcie mapy i dodanie do intent nazwy db danego child
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        intent.putExtra(NAME_OF_EXTRA_DATA_TO_INTENT_MAP, nameLong);
+        startActivity(intent);
+        Log.d(TAG, "onItemClick: ??");
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        shouldLoadAds = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shouldLoadAds = true;
+        mInterstitialAd.loadAd(new AdRequest.Builder().build()); // ładuje reklamę to chwile potrwa więc od razu może nie pokazać bo nie będzie załadowana dlatego trzeba dodać listenera jak niżej
+    }
 
     @Override
     protected void onStart() {

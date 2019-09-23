@@ -15,8 +15,8 @@ android {
         applicationId "com.wolfmobileapps.recordergps"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 500
-        versionName "5.0.0"
+        versionCode 520
+        versionName "5.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
