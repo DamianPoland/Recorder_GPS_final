@@ -86,6 +86,12 @@ limitations under the License.</string>
     <string name="export_data_to_file" translatable="false">Export</string>
     <string name="import_data_from_file" translatable="false">Import</string>
     <string name="export_and_import_data">Export and Import data:</string>
+    <string name="rating">Rating and reviev</string>
+    <string name="ask_later">I will ask later.</string>
+    <string name="thank_you_for_opinion">Thank You for opinion. \nWe still work to improve app.</string>
+    <string name="give_five_stars">Please give 5 stars if \nYou like this FREE app! \n</string>
+    <string name="review">Review</string>
+    <string name="later">Later</string>
 
 
 </resources>

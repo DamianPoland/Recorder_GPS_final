@@ -1,6 +1,7 @@
 package com.wolfmobileapps.recordergps;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
@@ -9,10 +10,12 @@ import androidx.lifecycle.Observer;
 import androidx.room.Room;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.Nullable;
@@ -29,8 +32,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_FOR_SHARED_PREF_TO_VISIBILITY = "key to shared pref to visibility";
     // dos prawdzenia google plat\y service
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    //stała do powiadomień o daniu  5 gwiazdek w app rating
+    public static final String KEY_APP_RATING_TIME = "key app rating time";
+    public static final String KEY_APP_RATING_ON_OFF = "key app rating on off";
 
     // stałe do reklam
     public static final String APP_ID = "ca-app-pub-1490567689734833~4589409756"; //zapisana w manifeście w metadata
@@ -104,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences shar;
     private SharedPreferences.Editor editor;
     private String[] permissions;
+
+    //do ratingu na google play
+    private float ratingFronUser = 1; // przypisane 1 w rzie jakby niekliknął nic i żeby się nie wywaliło
 
 
     @Override
@@ -142,6 +153,13 @@ public class MainActivity extends AppCompatActivity {
 
         // instancja shar
         shar = this.getSharedPreferences(NAME_OF_SHARED_PREFERNECES, MODE_PRIVATE);
+
+
+        // zapisanie do shar aktualnej daty przy pierwszym uruchomieniu by potem zapytać o 5 gwiadek rating
+        if ((shar.getLong(KEY_APP_RATING_TIME, 0)) == 0) {
+            writeTimeNowToSharedPref();
+        }
+
 
         // ustawienie visibility jeśli jest w trakcie liczenia
         if (shar.getBoolean(KEY_FOR_SHARED_PREF_SWITCH, false)) {
@@ -206,6 +224,17 @@ public class MainActivity extends AppCompatActivity {
                 editor = shar.edit(); //wywołany edytor do zmian
                 editor.putBoolean(KEY_FOR_SHARED_PREF_TO_VISIBILITY, false); // nadanie wartości
                 editor.apply(); // musi być na końcu aby zapisać zmiany w shar
+
+
+                // po tygodniu od pierwszego uruchomienia lub kliknięcia later ma odpalić zapytanie o danie 5 gwiazdek
+                if (shar.getBoolean(KEY_APP_RATING_ON_OFF, true)) {
+                    long timeNow = System.currentTimeMillis();
+                    long timeFromSharPref = shar.getLong(KEY_APP_RATING_TIME, 0);
+                    long timeAddedToShared = timeFromSharPref + 259200000; // do czasu który był zapisany w shared pref dodano 3 dni czyli 259200000
+                    if (timeNow > timeAddedToShared) {
+                        buildAlertDialogWithRating();
+                    }
+                }
             }
         });
 
@@ -295,8 +324,92 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // zapisanie do shar aktualnej daty by potem zapytać o 5 gwiadek rating na google play
+    private void writeTimeNowToSharedPref() {
+        long timeNowFirstOpen = System.currentTimeMillis();
+        editor = shar.edit(); //wywołany edytor do zmian
+        editor.putLong(KEY_APP_RATING_TIME, timeNowFirstOpen); // nadanie wartości
+        editor.apply(); // musi być na końcu aby zapisać zmiany w shar
+    }
+
+    // do namówienia zeby ktoś ocenił aplikację na 5 gwiazdek
+    private void buildAlertDialogWithRating() {
+
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(this);
+        final LinearLayout ll = new LinearLayout(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        RatingBar rating = new RatingBar(this);
+        rating.setLayoutParams(lp);
+        rating.setNumStars(5);
+        rating.setStepSize(1);
+        ll.addView(rating);
+        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                ///zapisanie ratingu do zmiennej
+                ratingFronUser = rating;
+            }
+        });
+        popDialog.setIcon(android.R.drawable.btn_star_big_on);
+        popDialog.setTitle(getResources().getString(R.string.give_five_stars));
+        popDialog.setView(ll);
+
+        // button later
+        popDialog
+                //button OK
+                .setPositiveButton(getResources().getString(R.string.review),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                // po kliknięciu OK nie będzie już wiecej sam wyświetlał dialogu o 5 gwiazdek, bedzie tylko działąć guzik w menu
+                                editor = shar.edit(); //wywołany edytor do zmian
+                                editor.putBoolean(KEY_APP_RATING_ON_OFF, false); // nadanie wartości
+                                editor.apply(); // musi być na końcu aby zapisać zmiany w shar
+
+                                if (ratingFronUser > 4) {
+                                    openWebPageWithRejestratorGPS();
+
+                                } else {
+                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.thank_you_for_opinion), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        })
+
+                // button LATER
+                .setNegativeButton(getResources().getString(R.string.later),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Toast.makeText(MainActivity.this, getResources().getString(R.string.ask_later), Toast.LENGTH_SHORT).show();
+                                writeTimeNowToSharedPref(); // zapisuje aktualną date żeby zapytać za jakiś czas od teraz a nie od pierwzego uruchomienia
+                                // po kliknięciu later  będzie wyświetlał dialog sam co jakiś czas
+                                editor = shar.edit(); //wywołany edytor do zmian
+                                editor.putBoolean(KEY_APP_RATING_ON_OFF, true); // nadanie wartości
+                                editor.apply(); // musi być na końcu aby zapisać zmiany w shar
+
+                                //dialog.cancel();
+                            }
+                        });
+
+        popDialog.create();
+        popDialog.show();
+    }
+
+    // metoda otwiera strone z rejestratorem gps
+    public void openWebPageWithRejestratorGPS() {
+        String url = "https://play.google.com/store/apps/details?id=com.wolfmobileapps.recordergps";
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
     //metoda otweira mape z daną drogą
-    private void openMap(int position){
+    private void openMap(int position) {
         //sprawdzeni czy google play sservice jest dostepny na telefonie
         if (!checkGooglePlayServices()) {
             Toast.makeText(MainActivity.this, "Google Play service not found", Toast.LENGTH_SHORT).show();
@@ -396,6 +509,10 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menuSetingsMain:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+               break;
+            case R.id.menuRating:
+                buildAlertDialogWithRating();
+                break;
         }
         return super.onOptionsItemSelected(item);//nie usuwać bo up button nie działa
     }

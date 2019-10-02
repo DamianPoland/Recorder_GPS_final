@@ -28,4 +28,10 @@
     <string name="privacy_policy_info">Informacje o polityce prywatności</string>
     <string name="export_and_import_data">Exportowanie i Importowanie danych</string>
     <string name="loading">Ładowanie ...</string>
+    <string name="rating">Oceń aplikację</string>
+    <string name="thank_you_for_opinion">Dziękujemy za opinię. \nWciąż pracujemy nad ulepszeniem aplikacji.</string>
+    <string name="ask_later">Zapytamy później.</string>
+    <string name="give_five_stars">"Daj 5 gwiazdek \njeśli ta DARMOWA aplikacja ci się podoba"</string>
+    <string name="later">Nie teraz</string>
+    <string name="review">Oceń</string>
 </resources>
