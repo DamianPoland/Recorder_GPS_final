@@ -247,12 +247,14 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply(); // musi być na końcu aby zapisać zmiany w shar
 
 
-                if (shouldLoadAds && mInterstitialAd.isLoaded()) { // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds patrz niżej
-                    mInterstitialAd.show(); //pokazuje reklamę
-                } else {
-                    //otwarcie mapy
-                    openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
-                }
+//                if (shouldLoadAds && mInterstitialAd.isLoaded()) { // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds patrz niżej
+//                    mInterstitialAd.show(); //pokazuje reklamę
+//                } else {
+//                    //otwarcie mapy
+//                    openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
+//                }
+                // zamiast tego wyżej ifa jest to:
+                openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
             }
         });
 
@@ -286,41 +288,41 @@ public class MainActivity extends AppCompatActivity {
         mAdView.loadAd(adRequest);
 
 
-        // do reklamy całoekranowej
-        MobileAds.initialize(this); //inicjalizacja reklam potrzebna tylko raz na całą aplikację
-        mInterstitialAd = new InterstitialAd(this); // instancja danej reklamy
-        mInterstitialAd.setAdUnitId(ADD_INTERSTITIAL_ID); //wpisać ID danej reklamy czyli identyfikator jednostki reklamowej wzięty z AdMOB
-        mInterstitialAd.loadAd(new AdRequest.Builder().build()); // ładuje reklamę to chwile potrwa więc od razu może nie pokazać bo nie będzie załadowana dlatego trzeba dodać listenera jak niżej
-        mInterstitialAd.setAdListener(new AdListener() {// dodaje listenera do pokazywania reklam jak np się załaduje reklama i mozna ustawić też inne rzeczy że się wyświetla ale są bez sensu
-            @Override
-            public void onAdLoaded() {
-            }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) { //jeśli error jest 3 to nie ma zasobów reklamowych
-            }
-
-            @Override
-            public void onAdOpened() {
-                // Code to be executed when the ad is displayed.
-            }
-
-            @Override
-            public void onAdClicked() {
-                // Code to be executed when the user clicks on an ad.
-            }
-
-            @Override
-            public void onAdLeftApplication() { //jeśli error to 3 to nie ma zasobów reklamowych
-                shouldLoadAds = false; // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds
-            }
-
-            @Override
-            public void onAdClosed() {
-                //otwarcie mapy
-                openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
-            }
-        });
+        // do reklamy całoekranowej - WYLĄCZONE reklamy pełnoekranowej tu, w onResume i w listViewOfMapPoints
+//        MobileAds.initialize(this); //inicjalizacja reklam potrzebna tylko raz na całą aplikację
+//        mInterstitialAd = new InterstitialAd(this); // instancja danej reklamy
+//        mInterstitialAd.setAdUnitId(ADD_INTERSTITIAL_ID); //wpisać ID danej reklamy czyli identyfikator jednostki reklamowej wzięty z AdMOB
+//        mInterstitialAd.loadAd(new AdRequest.Builder().build()); // ładuje reklamę to chwile potrwa więc od razu może nie pokazać bo nie będzie załadowana dlatego trzeba dodać listenera jak niżej
+//        mInterstitialAd.setAdListener(new AdListener() {// dodaje listenera do pokazywania reklam jak np się załaduje reklama i mozna ustawić też inne rzeczy że się wyświetla ale są bez sensu
+//            @Override
+//            public void onAdLoaded() {
+//            }
+//
+//            @Override
+//            public void onAdFailedToLoad(int errorCode) { //jeśli error jest 3 to nie ma zasobów reklamowych
+//            }
+//
+//            @Override
+//            public void onAdOpened() {
+//                // Code to be executed when the ad is displayed.
+//            }
+//
+//            @Override
+//            public void onAdClicked() {
+//                // Code to be executed when the user clicks on an ad.
+//            }
+//
+//            @Override
+//            public void onAdLeftApplication() { //jeśli error to 3 to nie ma zasobów reklamowych
+//                shouldLoadAds = false; // żeby reklamy nie pokazywały się po wyłaczeniu aplikacji - tylko do intestitialAds
+//            }
+//
+//            @Override
+//            public void onAdClosed() {
+//                //otwarcie mapy
+//                openMap(shar.getInt(KEY_FOR_POSITION_TO_OPEN_MAP, 0));
+//            }
+//        });
 
     }
 
@@ -446,7 +448,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         shouldLoadAds = true;
-        mInterstitialAd.loadAd(new AdRequest.Builder().build()); // ładuje reklamę to chwile potrwa więc od razu może nie pokazać bo nie będzie załadowana dlatego trzeba dodać listenera jak niżej
+
+        // wyłaczenie reklamy pełnoekranowej
+        //mInterstitialAd.loadAd(new AdRequest.Builder().build()); // ładuje reklamę to chwile potrwa więc od razu może nie pokazać bo nie będzie załadowana dlatego trzeba dodać listenera jak niżej
     }
 
     @Override

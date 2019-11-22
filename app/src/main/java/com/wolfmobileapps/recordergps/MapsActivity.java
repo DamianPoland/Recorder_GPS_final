@@ -103,7 +103,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (shar.getBoolean(KEY_FOR_SHARED_PREF_SWITCH,false)){
             zoom = 8; // mniejszy zoom dla drive mode
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(stopLatLng,zoom));
 
         //ustawienie polyline na mapie
         PolylineOptions polylineOptions = new PolylineOptions().width(5).color(Color.RED).geodesic(true);
